@@ -13,19 +13,26 @@ export function parseVideoURL(input: string): VideoURL {
         throw "";
     }
 
-    if (url.host != "www.youtube.com") {
-        throw "Your URL must be from www.youtube.com!";
+    let id = "";
+
+    if (url.host == "www.youtube.com") {
+        // throw "Your URL must be from www.youtube.com!";
+        const params = url.searchParams;
+        
+        if (!params.has("v")) {
+            throw "Your URL must contain the watch?v part!";
+        }
+
+        id = params.get("v")!;
+    } else if (url.host == "youtu.be") {
+        if (url.pathname.length <= 1) {
+            throw "Your URL must contain the video ID at the end!";
+        }
+
+        id = url.pathname.substring(1);
+    } else {
+        throw "Your URL must be from www.youtube.com or youtu.be!";
     }
-
-    const params = url.searchParams;
-    
-    if (!params.has("v")) {
-        throw "Your URL must contain the watch?v part!";
-    }
-
-    const id = params.get("v")!;
-
-    console.log(id);
 
     return {
         raw: url.toString(),
