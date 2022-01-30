@@ -2,7 +2,7 @@ import { Avatar, Box, Button, Card, CardActions, CardContent, CardHeader, CardMe
 
 import LoadingButton from '@mui/lab/LoadingButton';
 
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import DownloadIcon from "@mui/icons-material/Download";
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
@@ -13,7 +13,7 @@ import { stringifyNumber } from '../logic/numfmt';
 import FormatCard, { NoneDownloadCard } from './DownloadCard';
 import { download } from '../logic/download';
 
-export default function URLEntry() {
+export default function URLEntry({ prefill }: { prefill: string | null }) {
     const theme = useTheme();
 
     const [error, setError] = useState<string | null>(null);
@@ -25,6 +25,13 @@ export default function URLEntry() {
     const [videoFormatFrom, setVideoFormatFrom] = useState<Format | "none" | null>(null);
     const [audioFormatFrom, setAudioFormatFrom] = useState<Format | "none" | null>(null);
 
+    useEffect(() => {
+        // set the video url to the meta gained from prefill
+        if (prefill != null) {
+            urlChange(prefill);
+        }
+    }, []);    
+
     async function queryMeta(id: string) {
         const resp = await fetch(`/api/meta/${id}`);
         
@@ -35,9 +42,7 @@ export default function URLEntry() {
         return meta;
     }
 
-    async function onTextChange(e: any) {
-        const url = e.target.value;
-        
+    async function urlChange(url: string) {
         try {
             setError(null);
 
@@ -52,8 +57,13 @@ export default function URLEntry() {
         setVideoFormatFrom(null);
         setAudioFormatFrom(null);
     }
+
+    async function onTextChange(e: any) {
+        const url = e.target.value;
+        await urlChange(url);
+    }
     
-    async function onQueryClick(e: any) {
+    async function onQueryClick() {
         if (videoURL == null) return;
 
         setMetaLoading(true);
@@ -70,6 +80,7 @@ export default function URLEntry() {
         <TextField 
             label="Video URL" 
             variant="filled"
+            defaultValue={prefill}
             error={error != null}
             helperText={error}
             onChange={onTextChange}

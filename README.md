@@ -31,3 +31,8 @@ The web application, **youtube-dl-web** aims to create a user-friendly interface
   
   The UI is modern, easy to use and informative. Arguably the biggest limitation of youtube-dl is the command line interface, as most users
   do not know how to use it, and would often go back to subpar websites for downloading videos, at a lower quality.
+
+- Direct Substitution
+
+  You can simply replace "www.youtube.com" with the tool's URL (keeping the watch?v= part), and it will automatically pick up the video URL you
+  are trying to use. 
