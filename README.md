@@ -1,6 +1,8 @@
 # youtube-dl-web
 A good web interface for youtube-dl that allows you to download arbitrary mixes of audio and video, including up to the highest quality such as 8K.
 
+![Screenshot of the Webpage](images/screenshot_front.png)
+
 ## Motive
 There is no user-friendly method to download the highest quality of a YouTube video, without errors, and without installing software on your computer.
 
