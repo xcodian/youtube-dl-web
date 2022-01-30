@@ -5,6 +5,9 @@ FROM python:3.9-slim
 COPY ./requirements.txt /tmp/requirements.txt
 RUN pip3  --disable-pip-version-check --no-cache-dir install -r /tmp/requirements.txt
 RUN rm -v /tmp/requirements.txt
+RUN pip3 install -U yt-dlp
+
+RUN apt update && apt install -y ffmpeg
 
 # make the nonroot user
 RUN useradd user -m -s /usr/sbin/nologin
