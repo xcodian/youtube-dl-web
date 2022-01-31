@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Response
+from fastapi import FastAPI, Response, HTTPException
 from fastapi.responses import StreamingResponse, JSONResponse
 from util.meta import query_meta
 
@@ -28,6 +28,12 @@ async def main(video_id: str, f: str = "best"):
 
 @app.get("/meta/{video_id}")
 async def main(video_id: str):
-    return JSONResponse(
-        query_meta(video_id)
-    )
+    meta = query_meta(video_id)
+
+    if meta is None:
+        raise HTTPException(
+            status_code=400, 
+            detail="Could not get meta for requested Video ID!"
+        )
+
+    return JSONResponse(meta)

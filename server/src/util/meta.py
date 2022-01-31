@@ -23,8 +23,11 @@ def query_meta(id: str) -> dict:
             break
 
         data += b
-    
-    data = json.loads(data.decode('utf-8'))
+    try:
+        data = json.loads(data.decode('utf-8'))
+    except Exception as e:
+        print(f'could not decode json of {id}: {e}')
+        return None
 
     out = {
         "title": data["fulltitle"],
