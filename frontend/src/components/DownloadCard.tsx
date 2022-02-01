@@ -9,6 +9,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import DownloadIcon from "@mui/icons-material/Download";
 import { toTitleCase } from '../logic/titlecase';
 
+import NetworkCheckIcon from '@mui/icons-material/NetworkCheck';
+
 export default function FormatCard({ format, onClick, type, btnText }: { format: Format, onClick: any, type: "use" | "remove", btnText: string }) {
 
     function chips() {
@@ -40,6 +42,14 @@ export default function FormatCard({ format, onClick, type, btnText }: { format:
             )
         }
 
+        if (format.note.includes("THROTTLED")) {
+            s.push(
+                <Tooltip title="Download throttled by YouTube" arrow>
+                    <NetworkCheckIcon color="warning" />
+                </Tooltip>
+            )
+        }
+
         return s
     }
 
@@ -53,7 +63,7 @@ export default function FormatCard({ format, onClick, type, btnText }: { format:
         >
             <Tooltip title={`YT Format ID: ${format.id}`} arrow>
                 <Typography>
-                    {toTitleCase(format.note)}
+                    {toTitleCase(format.note.replaceAll(', THROTTLED', ''))}
                 </Typography>
             </Tooltip>
 
