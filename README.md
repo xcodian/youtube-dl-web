@@ -28,6 +28,10 @@ The web application, **youtube-dl-web** aims to create a user-friendly interface
   Youtube-dl-web never saves a file on the server disk, or makes you wait to start receiving data. As soon as a stream is received from
   YouTube, it immediately starts streaming over to your browser, for a direct download. This also works for the "pick your own" section,
   ensuring download speeds essentially limited only by your network connection.
+
+- Subtitle Download
+  
+  Download videos with their subtitles in all supported languages, with options to embed directly into the video (experimental) or to export separately as either a .srt, .ass or .vtt file!
   
 - User Friendly UI
   

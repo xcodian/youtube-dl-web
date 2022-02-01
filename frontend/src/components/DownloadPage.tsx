@@ -249,7 +249,7 @@ export default function DownloadPage({ prefill }: { prefill: string | null }) {
                 </Accordion>
 
                 <Typography variant="h5" mt={3} mb={1}>
-                    Quick Download (mp4)
+                    Quick Download
                 </Typography>
 
                 <Stack gap={1}>
