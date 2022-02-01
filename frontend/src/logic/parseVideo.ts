@@ -47,6 +47,7 @@ export interface VideoMeta {
     likes: number,
     views: number,
     formats: Array<Format>
+    subs: Record<string, string>
 }
 
 export interface Author {
@@ -72,27 +73,4 @@ export interface VideoSourceMeta {
     height: number,
     fps: number,
     codec: string
-}
-
-export function getDownloadLink(
-    id: string,
-    videoFrom: Format | "none",
-    audioFrom: Format | "none",
-): string {
-    let f = `/api/dl/${id}?f=`;
-
-    if (audioFrom == "none") {
-        // only download video
-        f += (videoFrom as Format).id 
-    } else {
-        if (videoFrom == "none") {
-            // no video, only audio, no need to add +
-            f += audioFrom.id
-        } else {
-            // download with + since there is a specific video and specific audio
-            f += videoFrom.id + "%2B" + audioFrom.id
-        }
-    }
-    
-    return f
 }

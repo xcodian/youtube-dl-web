@@ -4,7 +4,7 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Title from './components/Title';
-import URLEntry from './components/URLEntry';
+import DownloadPage from './components/DownloadPage';
 import { extractIDFromWatchV } from './logic/youtube_endpoint';
 
 
@@ -16,7 +16,7 @@ export default function App() {
       </Box>
 
       <Box sx={{ my: 4 }}>
-        <URLEntry prefill={
+        <DownloadPage prefill={
           extractIDFromWatchV(window.location.href)
         } />
       </Box>

@@ -4,6 +4,16 @@ import sys
 
 from typing import List
 
+def _only_named_subs(subs: dict):
+    # subtitles have a lot of url's that the frontend won't use, so let's just remove those
+    return {
+        # big dict of subtitle ids eg. en, de, fr 
+        sub_name: (
+            # make it so its just the name of the sub
+            formats[0]["name"]
+        ) for sub_name, formats in subs.items()
+    }
+
 def query_meta(id: str) -> dict:
     proc = subprocess.Popen(
         [
@@ -39,6 +49,9 @@ def query_meta(id: str) -> dict:
         "likes": data["like_count"],
         "views": data["view_count"],
         "formats": [],
+        "subs": _only_named_subs(
+            data.get("subtitles") or {}
+        )
     }
 
     for f in data['formats']:

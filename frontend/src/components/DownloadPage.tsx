@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Card, CardActions, CardContent, CardHeader, CardMedia, Divider, getIconButtonUtilityClass, IconButton, Link, Stack, TextField, Tooltip, Typography, useTheme } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Alert, AlertTitle, Avatar, Box, Button, Card, CardActions, CardContent, CardHeader, CardMedia, Divider, getIconButtonUtilityClass, IconButton, Link, MenuItem, Select, Stack, Switch, TextField, Tooltip, Typography, useTheme } from '@mui/material';
 
 import LoadingButton from '@mui/lab/LoadingButton';
 
@@ -7,13 +7,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import DownloadIcon from "@mui/icons-material/Download";
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 
-import { AudioSourceMeta, Format, getDownloadLink, parseVideoURL, VideoMeta, VideoSourceMeta, VideoURL } from '../logic/parseVideo';
+import { AudioSourceMeta, Format, parseVideoURL, VideoMeta, VideoSourceMeta, VideoURL } from '../logic/parseVideo';
 import { stringifyNumber } from '../logic/numfmt';
 import FormatCard, { NoneDownloadCard } from './DownloadCard';
-import { download } from '../logic/download';
+import { download, getDownloadLink } from '../logic/download';
 
-export default function URLEntry({ prefill }: { prefill: string | null }) {
+export default function DownloadPage({ prefill }: { prefill: string | null }) {
     const theme = useTheme();
 
     const [error, setError] = useState<string | null>(null);
@@ -24,6 +25,10 @@ export default function URLEntry({ prefill }: { prefill: string | null }) {
 
     const [videoFormatFrom, setVideoFormatFrom] = useState<Format | "none" | null>(null);
     const [audioFormatFrom, setAudioFormatFrom] = useState<Format | "none" | null>(null);
+
+    const [shouldDownloadSubs, setShouldDownloadSubs] = useState<boolean>(false);
+    const [targetSubId, setTargetSubId] = useState<string>("");
+    const [subFormat, setSubFormat] = useState<string>("srt");
 
     useEffect(() => {
         // set the video url to the meta gained from prefill
@@ -70,6 +75,18 @@ export default function URLEntry({ prefill }: { prefill: string | null }) {
         try {
             const m = await queryMeta(videoURL.id)
             setVideoMeta(m);
+
+            const sub_keys = Object.keys(m.subs);
+            if (sub_keys.length > 0) {
+                if (sub_keys.includes("en")) {
+                    // try to set format to english if english exists
+                    setTargetSubId("en");
+                } else {
+                    // otherwise try to set sub format to first available sub
+                    setTargetSubId(sub_keys[0]);
+                }
+            }
+
         } catch (error) {
             setError("Unable to retrieve video metadata.")
         }
@@ -101,7 +118,9 @@ export default function URLEntry({ prefill }: { prefill: string | null }) {
 
         {
             videoMeta == null ? null : <Box mt={5}>
-                <Card>
+                <Card variant="outlined" sx={{
+                    mb: 3
+                }}>
                     <CardMedia
                         component="img"
                         height="100px"
@@ -148,8 +167,89 @@ export default function URLEntry({ prefill }: { prefill: string | null }) {
                     </CardActions>
                 </Card>
 
-                <Typography variant="h5" mt={5} mb={1}>
-                    Quick Download
+                <Accordion sx={{
+                    border: `1px solid ${theme.palette.divider}`,
+                    borderRadius: `4px`,
+                    boxShadow: 'none',
+                    '&:before': {
+                        display: 'none',
+                    },
+                }}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                    >
+                        <Typography color="text.secondary">Subtitle Options</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        {
+                            Object.keys(videoMeta.subs).length == 0 
+                            ? (
+                                <Alert severity='error'>
+                                    This video does not have any subtitle tracks.
+                                </Alert>
+                            )
+                            : <>
+                                {
+                                    (subFormat == "embed" && shouldDownloadSubs)
+                                    ? <Alert severity='warning' sx={{ mb: 2 }}>
+                                        <AlertTitle>
+                                            Embedding subtitles is still experimental
+                                        </AlertTitle>
+                                        Download speeds may be slower due to subtitle injection!
+                                    </Alert>: null    
+                                }
+
+                                <Box display="flex" alignItems="center">
+                                    <Switch 
+                                        onChange={
+                                            (e) => setShouldDownloadSubs(e.target.checked)
+                                        }
+                                        checked={shouldDownloadSubs}
+                                    />
+                                    <Typography mr={2} color={shouldDownloadSubs ? "text.primary" : "text.secondary"}>
+                                        Download subtitles for video in 
+                                    </Typography>
+                                    <Select 
+                                        disabled={!shouldDownloadSubs} 
+                                        value={targetSubId}
+                                        onChange={e => {
+                                            setTargetSubId(e.target.value);
+                                        }}
+                                    >
+                                        {
+                                            Object.keys(videoMeta.subs).map(
+                                                (subId, idx) => {
+                                                    const name = videoMeta.subs[subId];
+                                                    return <MenuItem value={subId}>{name}</MenuItem>
+                                                } 
+                                            )
+                                        }
+                                    </Select>
+                                    <Typography ml={2} mr={2} color={shouldDownloadSubs ? "text.primary" : "text.secondary"}>
+                                        and 
+                                    </Typography>
+                                    <Select 
+                                        disabled={!shouldDownloadSubs} 
+                                        value={subFormat}
+                                        onChange={e => {
+                                            setSubFormat(e.target.value);
+                                        }}
+                                    >
+                                        <MenuItem value={"embed"}>Embed into video</MenuItem>
+                                        <MenuItem value={"srt"}>Export .srt subtitle file</MenuItem>
+                                        <MenuItem value={"ass"}>Export .ass subtitle file</MenuItem>
+                                        <MenuItem value={"vtt"}>Export .vtt subtitle file</MenuItem>
+                                    </Select>
+                                </Box>
+                            </>
+                        }
+
+                        
+                    </AccordionDetails>
+                </Accordion>
+
+                <Typography variant="h5" mt={3} mb={1}>
+                    Quick Download (mp4)
                 </Typography>
 
                 <Stack gap={1}>
@@ -163,7 +263,9 @@ export default function URLEntry({ prefill }: { prefill: string | null }) {
                                 type="use"
                                 onClick={()=>{
                                     download(
-                                        getDownloadLink(videoURL!.id, f, "none")
+                                        videoURL!.id, f, "none",
+                                        shouldDownloadSubs,
+                                        targetSubId, subFormat
                                     )
                                 }}
                                 key={f.id} 
@@ -293,7 +395,7 @@ export default function URLEntry({ prefill }: { prefill: string | null }) {
                 {
                     videoFormatFrom == null || audioFormatFrom == null ? null
                     : (
-                        <>
+                        <Tooltip arrow title="The downloaded file will be a Matroska Video (.mkv) file due to container limitations of mix-and-match-ing audio and video of different formats.">
                             <LoadingButton 
                                 variant="contained" 
                                 endIcon={<DownloadIcon /> } 
@@ -302,12 +404,20 @@ export default function URLEntry({ prefill }: { prefill: string | null }) {
                                 sx={{ mt: 3 }}
                                 loading={isMetaLoading}
                                 size="large"
-                                href={getDownloadLink(videoURL!.id, videoFormatFrom, audioFormatFrom)}
-                                download
+                                onClick={
+                                    () => {
+                                        download(
+                                            videoURL!.id, 
+                                            videoFormatFrom, audioFormatFrom,
+                                            shouldDownloadSubs,
+                                            targetSubId, subFormat
+                                        );
+                                    }
+                                }
                             >
                                 Download Selected
                             </LoadingButton>
-                        </>
+                        </Tooltip>
                     )
                 }
             </Box>
