@@ -1,7 +1,12 @@
-import { Box, Link, Paper, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Link, Paper, useMediaQuery, useTheme, Switch, IconButton } from '@mui/material';
 import { red } from '@mui/material/colors';
 import Typography from '@mui/material/Typography';
 import React from 'react';
+
+import { ModeContext } from '..';
+
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
 
 export default function Title() {
     const theme = useTheme();
@@ -31,15 +36,43 @@ export default function Title() {
         </Paper>
     </Box>
 
-    <Typography variant="body2" color="text.secondary" align="center">
-        {'by '}
-        <Link color="inherit" href="https://github.com/xxcodianxx">
-            xxcodianxx
-        </Link>
-        {' powered by '}
-        <Link color="inherit" href="https://github.com/yt-dlp/yt-dlp">
-            yt-dlp
-        </Link>
-    </Typography>
+    <Box 
+        display="flex" 
+        alignItems="center" 
+        justifyContent="center"
+        gap={1}
+    >
+        <Typography variant="body2" color="text.secondary" align="center">
+            {'by '}
+            <Link color="inherit" href="https://github.com/xxcodianxx">
+                xxcodianxx
+            </Link>
+            {' powered by '}
+            <Link color="inherit" href="https://github.com/yt-dlp/yt-dlp">
+                yt-dlp
+            </Link>
+        </Typography>
+        <ModeContext.Consumer>
+            { 
+                ({ mode, setMode }: any) => (
+                    <IconButton 
+                        onClick={
+                            () => setMode(
+                                mode == 'dark' 
+                                  ? 'light' 
+                                  : 'dark'
+                            )
+                        }
+                    >
+                        { 
+                            mode == 'dark' 
+                              ? <Brightness7Icon />
+                              : <Brightness4Icon />
+                        }
+                    </IconButton>
+                )
+            }
+        </ModeContext.Consumer>
+    </Box>
   </>;
 }
