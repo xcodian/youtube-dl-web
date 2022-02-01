@@ -1,9 +1,12 @@
-import { Box, Link, Paper } from '@mui/material';
+import { Box, Link, Paper, useMediaQuery, useTheme } from '@mui/material';
 import { red } from '@mui/material/colors';
 import Typography from '@mui/material/Typography';
 import React from 'react';
 
 export default function Title() {
+    const theme = useTheme();
+    const isSmall = useMediaQuery(theme.breakpoints.down('md'));
+
   return <>
     <Box 
         display="flex"
@@ -14,7 +17,7 @@ export default function Title() {
         }}
         mb={1}
     >
-        <Typography variant="h3">
+        <Typography variant={isSmall ? "h4": "h3"}>
             youtube-dl
         </Typography>
         <Paper sx={{
@@ -22,7 +25,7 @@ export default function Title() {
             ml: 2,
             p: 1,
         }}>
-            <Typography variant="h3" color="white">
+            <Typography variant={isSmall ? "h4": "h3"} color="white">
                 web
             </Typography>
         </Paper>

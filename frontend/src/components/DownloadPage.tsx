@@ -199,14 +199,14 @@ export default function DownloadPage({ prefill }: { prefill: string | null }) {
                                     </Alert>: null    
                                 }
 
-                                <Box display="flex" alignItems="center">
+                                <Box display="flex" alignItems="center" gap={2} flexWrap='wrap'>
                                     <Switch 
                                         onChange={
                                             (e) => setShouldDownloadSubs(e.target.checked)
                                         }
                                         checked={shouldDownloadSubs}
                                     />
-                                    <Typography mr={2} color={shouldDownloadSubs ? "text.primary" : "text.secondary"}>
+                                    <Typography color={shouldDownloadSubs ? "text.primary" : "text.secondary"}>
                                         Download subtitles for video in 
                                     </Typography>
                                     <Select 
@@ -225,7 +225,7 @@ export default function DownloadPage({ prefill }: { prefill: string | null }) {
                                             )
                                         }
                                     </Select>
-                                    <Typography ml={2} mr={2} color={shouldDownloadSubs ? "text.primary" : "text.secondary"}>
+                                    <Typography color={shouldDownloadSubs ? "text.primary" : "text.secondary"}>
                                         and 
                                     </Typography>
                                     <Select 
@@ -279,8 +279,8 @@ export default function DownloadPage({ prefill }: { prefill: string | null }) {
                     or
                 </Divider>
 
-                <Box display="flex" >
-                    <Box mr={3} flexGrow={1}>
+                <Box display="flex" flexWrap='wrap' gap={3}>
+                    <Box flexGrow={1}>
                         <Typography variant="h5" mb={1}>
                             Pick your audio
                         </Typography>

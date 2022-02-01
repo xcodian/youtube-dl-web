@@ -35,7 +35,6 @@ export default function FormatCard({ format, onClick, type, btnText }: { format:
                     <Chip 
                         label={ `${format.audio.samples} Hz` + (format.audio.rate > 0 ? ` @ ${format.audio.rate.toFixed(2)} Kbps` : "") }
                         icon={<HeadphonesIcon />}
-                        sx={{ ml: 1 }}
                     /> 
                 </Tooltip>
             )
@@ -48,10 +47,12 @@ export default function FormatCard({ format, onClick, type, btnText }: { format:
         <Box 
             display="flex"
             alignItems="center"
+            flexWrap='wrap'
+            gap={1}
             p={2}
         >
             <Tooltip title={`YT Format ID: ${format.id}`} arrow>
-                <Typography pr={1} >
+                <Typography>
                     {toTitleCase(format.note)}
                 </Typography>
             </Tooltip>
