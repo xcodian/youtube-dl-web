@@ -3,10 +3,16 @@ export interface VideoURL {
     id: string
 }
 
+const WATCHV_REGEX = /^((www\.|music\.))?youtube.com$/;
+const HTTP_REGEX = /^(https?):\/\//;
+
 export function parseVideoURL(input: string): VideoURL {
     let url;
     
     try {
+        if (!HTTP_REGEX.test(input)) {
+            input = "https://" + input;
+        }
         url = new URL(input);
     } catch {
         // silent error
@@ -15,7 +21,9 @@ export function parseVideoURL(input: string): VideoURL {
 
     let id = "";
 
-    if (url.host == "www.youtube.com") {
+    console.log(input, url.host)
+
+    if (WATCHV_REGEX.test(url.host)) {
         // throw "Your URL must be from www.youtube.com!";
         const params = url.searchParams;
         
@@ -31,7 +39,7 @@ export function parseVideoURL(input: string): VideoURL {
 
         id = url.pathname.substring(1);
     } else {
-        throw "Your URL must be from www.youtube.com or youtu.be!";
+        throw "Your URL must be from YouTube or from YouTube Music!";
     }
 
     return {
