@@ -114,7 +114,7 @@ $ docker-compose logs -f
 
 ### SSL
 
-The steps above describe running youtube-dl-web without SSL, meaning that all traffic sent to and from your webserver is over the internet! 
+The steps above describe running youtube-dl-web without SSL, meaning that all traffic sent to and from your webserver is over the internet in the clear! 
 
 It's not like there's that much sensitive data being sent over, but it's nice to have HTTPS support.
 
@@ -123,7 +123,7 @@ For home hosting, this is not required at all.
 #### Obtaining SSL Certificates
 The NGINX config is set up for Let's Encrypt certificates.
 
-Once generated with certbot, they can be found in `/etc/letsencrypt/live/yourdomain.example.net/*.pem`
+Once generated with `certbot`, they can be found in `/etc/letsencrypt/live/yourdomain.example.net/*.pem`
 
 #### Enabling SSL Support
 
