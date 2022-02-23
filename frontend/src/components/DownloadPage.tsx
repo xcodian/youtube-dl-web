@@ -395,7 +395,14 @@ export default function DownloadPage({ prefill }: { prefill: string | null }) {
                 {
                     videoFormatFrom == null || audioFormatFrom == null ? null
                     : (
-                        <Tooltip arrow title="The downloaded file will be a Matroska Video (.mkv) file due to container limitations of mix-and-match-ing audio and video of different formats.">
+                        <Tooltip 
+                            arrow 
+                            title={
+                                (videoFormatFrom !== "none" && audioFormatFrom !== "none") ?
+                                    "The downloaded file will be a Matroska Video (.mkv) file due to container limitations of mix-and-match-ing audio and video of different formats."
+                                : `Will download in format of ${videoFormatFrom === "none" ? "audio" : "video"} stream.`
+                            }
+                        >
                             <LoadingButton 
                                 variant="contained" 
                                 endIcon={<DownloadIcon /> } 
