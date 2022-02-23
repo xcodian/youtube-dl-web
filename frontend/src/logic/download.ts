@@ -22,6 +22,10 @@ export function download(
     let url = getDownloadLink(id, videoFrom, audioFrom);
 
     if (downloadSubs) {
+        if (subLanguage == "live_chat") {
+            subFormat = "json"
+        }
+        
         if (subFormat == "embed") {
             url += `&sl=${subLanguage}`;
         } else {

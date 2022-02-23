@@ -190,13 +190,21 @@ export default function DownloadPage({ prefill }: { prefill: string | null }) {
                             )
                             : <>
                                 {
-                                    (subFormat == "embed" && shouldDownloadSubs)
+                                    (shouldDownloadSubs && videoMeta.subs['live_chat'] != undefined) 
+                                    ? <Alert severity='warning' sx={{ mb: 2 }}>
+                                        <AlertTitle>
+                                            The live chat JSON file is quite large, and cannot be streamed.
+                                        </AlertTitle>
+                                        It may take a long time for your download to start (around 15 seconds) so wait it out!
+                                    </Alert>
+                                    : (shouldDownloadSubs && subFormat == "embed")
                                     ? <Alert severity='warning' sx={{ mb: 2 }}>
                                         <AlertTitle>
                                             Embedding subtitles is still experimental
                                         </AlertTitle>
                                         Download speeds may be slower due to subtitle injection!
-                                    </Alert>: null    
+                                    </Alert>
+                                    : null
                                 }
 
                                 <Box display="flex" alignItems="center" gap={2} flexWrap='wrap'>
@@ -207,39 +215,43 @@ export default function DownloadPage({ prefill }: { prefill: string | null }) {
                                         checked={shouldDownloadSubs}
                                     />
                                     <Typography color={shouldDownloadSubs ? "text.primary" : "text.secondary"}>
-                                        Download subtitles for video in 
+                                        {videoMeta.subs['live_chat'] != undefined ? "Separately download live chat JSON for stream" : "Download subtitles for video in "}
                                     </Typography>
-                                    <Select 
-                                        disabled={!shouldDownloadSubs} 
-                                        value={targetSubId}
-                                        onChange={e => {
-                                            setTargetSubId(e.target.value);
-                                        }}
-                                    >
-                                        {
-                                            Object.keys(videoMeta.subs).map(
-                                                (subId, idx) => {
-                                                    const name = videoMeta.subs[subId];
-                                                    return <MenuItem value={subId}>{name}</MenuItem>
-                                                } 
-                                            )
-                                        }
-                                    </Select>
-                                    <Typography color={shouldDownloadSubs ? "text.primary" : "text.secondary"}>
-                                        and 
-                                    </Typography>
-                                    <Select 
-                                        disabled={!shouldDownloadSubs} 
-                                        value={subFormat}
-                                        onChange={e => {
-                                            setSubFormat(e.target.value);
-                                        }}
-                                    >
-                                        <MenuItem value={"embed"}>Embed into video</MenuItem>
-                                        <MenuItem value={"srt"}>Export .srt subtitle file</MenuItem>
-                                        <MenuItem value={"ass"}>Export .ass subtitle file</MenuItem>
-                                        <MenuItem value={"vtt"}>Export .vtt subtitle file</MenuItem>
-                                    </Select>
+                                    {
+                                        videoMeta.subs['live_chat'] != undefined ? null : <>
+                                            <Select 
+                                                disabled={!shouldDownloadSubs} 
+                                                value={targetSubId}
+                                                onChange={e => {
+                                                    setTargetSubId(e.target.value);
+                                                }}
+                                            >
+                                                {
+                                                    Object.keys(videoMeta.subs).map(
+                                                        (subId, idx) => {
+                                                            const name = videoMeta.subs[subId];
+                                                            return <MenuItem value={subId}>{name}</MenuItem>
+                                                        } 
+                                                    )
+                                                }
+                                            </Select>
+                                            <Typography color={shouldDownloadSubs ? "text.primary" : "text.secondary"}>
+                                                and 
+                                            </Typography>
+                                            <Select
+                                                disabled={!shouldDownloadSubs} 
+                                                value={subFormat}
+                                                onChange={e => {
+                                                    setSubFormat(e.target.value);
+                                                }}
+                                            >
+                                                <MenuItem value={"embed"}>Embed into video</MenuItem>
+                                                <MenuItem value={"srt"}>Export .srt subtitle file</MenuItem>
+                                                <MenuItem value={"ass"}>Export .ass subtitle file</MenuItem>
+                                                <MenuItem value={"vtt"}>Export .vtt subtitle file</MenuItem>
+                                            </Select>
+                                        </>
+                                    }
                                 </Box>
                             </>
                         }
@@ -394,7 +406,7 @@ export default function DownloadPage({ prefill }: { prefill: string | null }) {
 
                 {
                     videoFormatFrom == null || audioFormatFrom == null ? null
-                    : (
+                    : <>
                         <Tooltip 
                             arrow 
                             title={
@@ -425,7 +437,12 @@ export default function DownloadPage({ prefill }: { prefill: string | null }) {
                                 Download Selected
                             </LoadingButton>
                         </Tooltip>
-                    )
+                        <Typography color="text.secondary" mt={3} mb={1}>
+                            Note that downloading is done entirely using your browser's download system.
+                            If you do not see activity immediately, please wait a few seconds as your browser
+                            receives data.
+                        </Typography>
+                    </>
                 }
             </Box>
         }

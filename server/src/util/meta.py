@@ -10,7 +10,7 @@ def _only_named_subs(subs: dict):
         # big dict of subtitle ids eg. en, de, fr 
         sub_name: (
             # make it so its just the name of the sub
-            formats[0]["name"]
+            formats[0].get("name") or sub_name # sometimes subs don't have name, weird...
         ) for sub_name, formats in subs.items()
     }
 

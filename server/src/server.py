@@ -59,7 +59,7 @@ def _remove_file(path: str) -> None:
 
 @app.get("/sub/{video_id}")
 async def main(background_tasks: BackgroundTasks, video_id: str, l: str = "en", f: str = "vtt"):
-    if f not in ["vtt", "ass", "srt"]:
+    if f not in ["vtt", "ass", "srt"] and not (l == "live_chat" and f == "json"):
         raise HTTPException(
             status_code=400,
             detail="Invalid subtitle format, valid options are: vtt, ass, srt"

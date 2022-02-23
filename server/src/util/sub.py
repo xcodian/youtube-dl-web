@@ -18,6 +18,9 @@ def download_subs(id: str, lang: str, format: str = "vtt"):
         "--sub-langs", lang
     ]
 
+    if lang == 'live_chat':
+        format = 'json'
+
     if format != "vtt" and format in ["srt", "ass"]:
         args += [
             "--convert-subs", format
@@ -29,6 +32,7 @@ def download_subs(id: str, lang: str, format: str = "vtt"):
     )
 
     proc.wait()
+
 
     if not os.path.isfile(sub_dest + f'.{lang}.{format}'):
         # wrong subs
