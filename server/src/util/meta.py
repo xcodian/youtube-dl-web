@@ -39,6 +39,8 @@ def query_meta(id: str) -> dict:
         print(f'could not decode json of {id}: {e}')
         return None
 
+    subs = data.get("subtitles")
+
     out = {
         "title": data["fulltitle"],
         "author": {
@@ -50,14 +52,14 @@ def query_meta(id: str) -> dict:
         "views": data["view_count"],
         "formats": [],
         "subs": _only_named_subs(
-            data.get("subtitles") or {}
+            subs if isinstance(subs, dict) else {}
         )
     }
 
     for f in data['formats']:
         f_out = {
             "id": f["format_id"],
-            "note": f["format_note"],
+            "note": f.get("format_note") or f"Format #{f['format_id']}",
         }
 
         if f.get("asr") != None:

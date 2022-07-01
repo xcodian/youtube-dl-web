@@ -10,7 +10,7 @@ from util.stream import stream_from_yt
 app = FastAPI()
 
 @app.get("/dl/{video_id}")
-async def main(
+async def api_dl(
     video_id: str,   # the video's ID (watch?v=<this>)
     f: str = "best", # format 
     sl: str = None,  # subtitle language to embed
@@ -34,7 +34,7 @@ async def main(
     )
 
 @app.get("/meta/{video_id}")
-async def main(video_id: str):
+async def api_meta(video_id: str):
     meta = query_meta(video_id)
 
     if meta is None:
@@ -58,7 +58,7 @@ def _remove_file(path: str) -> None:
     os.remove(path)
 
 @app.get("/sub/{video_id}")
-async def main(background_tasks: BackgroundTasks, video_id: str, l: str = "en", f: str = "vtt"):
+async def api_sub(background_tasks: BackgroundTasks, video_id: str, l: str = "en", f: str = "vtt"):
     if f not in ["vtt", "ass", "srt"] and not (l == "live_chat" and f == "json"):
         raise HTTPException(
             status_code=400,
