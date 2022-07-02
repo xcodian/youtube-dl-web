@@ -86,6 +86,12 @@ $ sudo chmod +x /usr/local/bin/docker-compose
 ```
 $ git clone https://github.com/xxcodianxx/youtube-dl-web
 ```
+:warning: This tutorial assumes you are running the following commands as UID 1000.
+Make sure the folders are owned by UID 1000 & GID 1000, as the automatic containerized build process depends on it.
+
+```
+$ chown -R 1000:1000 youtube-dl-web
+```
 
 #### Step 2: Build Frontend Static Files
 This makes sure that all of the HTML is compiled ready for the
