@@ -4,7 +4,7 @@ import select
 import subprocess
 import threading
 
-from util.sub  import download_subs
+from util.sub import download_subs
 
 async def aio_dummy():
     # dummy event to hold up the event loop
@@ -38,7 +38,7 @@ async def stream_from_yt(id: str, format: str = "best", sl: str = None):
         # specify output format
         "-f", format,
         # matroska just allows every format possible
-        "--merge-output-format", "matroska"
+        "--merge-output-format", "mkv"
     ]
 
 
@@ -122,7 +122,7 @@ async def stream_from_yt(id: str, format: str = "best", sl: str = None):
                     continue
             else:
                 # print('try to read bucket from downloader proc...')
-                bucket = downloader_proc.stdout.read(131072) 
+                bucket = downloader_proc.stdout.read(131072)
 
             if len(bucket) == 0:
                 break
