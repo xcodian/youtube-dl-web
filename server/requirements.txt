@@ -1,2 +1,3 @@
 fastapi==0.73.0
 uvicorn==0.17.1
+python-magic==0.4.27
