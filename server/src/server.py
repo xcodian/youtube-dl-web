@@ -29,7 +29,7 @@ async def api_dl(
     # guess extension based on mimetype
     ext = mimetypes.guess_extension(mime_type) or '.mkv' # fallback to mkv I guess
     
-    print(mime_type, ext)
+    print(f"[{video_id}]: download type: {mime_type} ({ext})")
     
     headers = {
         "Content-Disposition": f"attachment;filename={video_id}{ext}"
