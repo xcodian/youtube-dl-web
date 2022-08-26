@@ -32,7 +32,7 @@ async def api_dl(
     print(f"[{video_id}]: download type: {mime_type} ({ext})")
     
     headers = {
-        "Content-Disposition": f"attachment;filename={video_id}{ext}"
+        "Content-Disposition": f"attachment;filename={query_meta(video_id)['title']}{ext}"
     }
 
     async def joined_stream():
