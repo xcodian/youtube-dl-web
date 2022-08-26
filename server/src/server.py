@@ -1,5 +1,6 @@
 import mimetypes
 import os
+from urllib.parse import quote as url_quote
 
 import magic
 
@@ -18,6 +19,7 @@ async def api_dl(
     video_id: str,   # the video's ID (watch?v=<this>)
     f: str = "best", # format 
     sl: str = None,  # subtitle language to embed
+    title: str = None
 ):
     stream = stream_from_yt(video_id, f, sl)  
     first_chunk = await stream.__anext__() # peek first chunk
@@ -32,7 +34,7 @@ async def api_dl(
     print(f"[{video_id}]: download type: {mime_type} ({ext})")
     
     headers = {
-        "Content-Disposition": f"attachment;filename={query_meta(video_id)['title']}{ext}"
+        "Content-Disposition": f"attachment;filename*=UTF-8\'\'{url_quote(title)}{ext}"
     }
 
     async def joined_stream():
