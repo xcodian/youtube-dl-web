@@ -2,7 +2,7 @@
 FROM python:3.9-slim
 
 # install pkg deps
-RUN apt update && apt install -y ffmpeg libmagic-dev gcc
+RUN apt update && apt install -y ffmpeg libmagic-dev gcc g++
 
 # install py deps
 COPY ./requirements.txt /tmp/requirements.txt
