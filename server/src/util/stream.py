@@ -7,36 +7,42 @@ import threading
 from util.sub import download_subs
 
 async def aio_dummy():
-    # dummy event to hold up the event loop
-    loop = asyncio.get_running_loop()
+    """
+    dummy event to hold up the event loop
+    """
 
+    loop = asyncio.get_running_loop()
     dummy_future = loop.create_future()
     dummy_handle = loop.call_soon(
-        asyncio.futures._set_result_unless_cancelled, 
-        dummy_future, 
+        asyncio.futures._set_result_unless_cancelled,
+        dummy_future,
         None
     )
-    
+
     try:
         # execute dummy future (do nothing)
         await dummy_future
-    except Exception as e:
+    except Exception as error:
         # future couldn't proceed
-        raise e
+        raise error
     finally:
         # close future handle
         dummy_handle.cancel()
-    
 
-async def stream_from_yt(id: str, format: str = "best", sl: str = None):
-    print(f"[{id}]: requested with format {format} and subs {sl}, configuring...")
+
+async def stream_from_yt(vid_id: str, dl_format: str = "best", sub_lang: str = None):
+    """
+    Make yt-dlp download the media and output to a pipe
+    """
+
+    print(f"[{vid_id}]: requested with format {dl_format} and subs {sub_lang}, configuring...")
     args = [
         # request to download with video ID
-        "yt-dlp", id, 
+        "yt-dlp", vid_id,
         # output to stdout (needed for streaming)
-        "-o", "-", 
+        "-o", "-",
         # specify output format
-        "-f", format,
+        "-f", dl_format,
         # matroska just allows every format possible
         "--merge-output-format", "mkv"
     ]
@@ -51,11 +57,11 @@ async def stream_from_yt(id: str, format: str = "best", sl: str = None):
 
     sub_injector_proc = None
 
-    if sl is not None:
-        print(f'[{id}]: embedded subtitles requested for {id} in language {sl}, downloading now')
-        sub_fname = download_subs(id, sl)
-        print(f'[{id}]: injecting subtitles from {sub_fname} to output stream')
-    
+    if sub_lang is not None:
+        print(f'[{vid_id}]: embedded subtitles requested for {vid_id} in language {sub_lang}, downloading now')
+        sub_fname = download_subs(vid_id, sub_lang)
+        print(f'[{vid_id}]: injecting subtitles from {sub_fname} to output stream')
+
         f_args = [
             "ffmpeg",
             "-i", "pipe:",
@@ -75,7 +81,7 @@ async def stream_from_yt(id: str, format: str = "best", sl: str = None):
         )
 
         def _feed():
-            print(f'subinject[{id}]: started feeding')
+            print(f'subinject[{vid_id}]: started feeding')
             try:
                 while True:
                     # print('thread: read from downloader...')
@@ -83,17 +89,17 @@ async def stream_from_yt(id: str, format: str = "best", sl: str = None):
 
                     if len(dl_bucket) == 0:
                         # downloader data exausted
-                        print(f'subinject[{id}]: download date exausted, exiting')
+                        print(f'subinject[{vid_id}]: download date exausted, exiting')
                         # write nothing and break
                         sub_injector_proc.stdin.write(dl_bucket)
                         sub_injector_proc.stdin.close()
                         break
-                    
+
                     # print(f'thread: write {len(dl_bucket)} to injector...')
                     sub_injector_proc.stdin.write(dl_bucket)
                     # print(f'thread: wrote {len(dl_bucket)} to injector!')
             except BrokenPipeError:
-                print(f'subinject[{id}]: pipe broken, exiting')
+                print(f'subinject[{vid_id}]: pipe broken, exiting')
                 return
 
         sub_feeder_thread = threading.Thread(
@@ -101,20 +107,20 @@ async def stream_from_yt(id: str, format: str = "best", sl: str = None):
         )
 
         sub_feeder_thread.start()
-    
-    try:
-        print(f'[{id}]: sending stream')
 
-        if "+" in format:
-            print(f"[{id}]: stream will be merged ({format})")
+    try:
+        print(f'[{vid_id}]: sending stream')
+
+        if "+" in dl_format:
+            print(f"[{vid_id}]: stream will be merged ({dl_format})")
         else:
-            print(f"[{id}]: stream will be sent as is ({format})")
+            print(f"[{vid_id}]: stream will be sent as is ({dl_format})")
 
         while True:
             if sub_injector_proc is not None:
                 # print('read bucket from injector...')
-                r, w, x = select.select([ sub_injector_proc.stdout ], [], [], 1)
-                if sub_injector_proc.stdout in r:
+                read, _, _ = select.select([ sub_injector_proc.stdout ], [], [], 1)
+                if sub_injector_proc.stdout in read:
                     bucket = os.read(sub_injector_proc.stdout.fileno(), 65536)
                 else:
                     # print('not ready to read yet...')
@@ -135,14 +141,14 @@ async def stream_from_yt(id: str, format: str = "best", sl: str = None):
 
             await aio_dummy()
 
-        print(f'[{id}]: end of data (no error reported)')
+        print(f'[{vid_id}]: end of data (no error reported)')
     except asyncio.CancelledError:
         # this will get thrown because of the dummy future
-        print(f'[{id}]: user terminated stream')
-    except Exception as e:
-        print(f'[{id}]: stream terminated exceptionally: {e}')
+        print(f'[{vid_id}]: user terminated stream')
+    except Exception as error:
+        print(f'[{vid_id}]: stream terminated exceptionally: {error}')
     finally:
-        print(f"cleanup[{id}]: killing downloader process (PID: {downloader_proc.pid})")
+        print(f"cleanup[{vid_id}]: killing downloader process (PID: {downloader_proc.pid})")
 
         # kill downloader process
         downloader_proc.terminate()
@@ -151,7 +157,7 @@ async def stream_from_yt(id: str, format: str = "best", sl: str = None):
         downloader_proc.wait()
 
         if sub_injector_proc is not None:
-            print(f"cleanup[{id}]: killing sub injector process (PID: {sub_injector_proc.pid})")
+            print(f"cleanup[{vid_id}]: killing sub injector process (PID: {sub_injector_proc.pid})")
 
             # kill injector process
             sub_injector_proc.terminate()
@@ -160,5 +166,5 @@ async def stream_from_yt(id: str, format: str = "best", sl: str = None):
             sub_injector_proc.wait()
 
             # remove subtitles
-            print(f"cleanup[{id}]: removing {sub_fname}")
+            print(f"cleanup[{vid_id}]: removing {sub_fname}")
             os.remove(sub_fname)
