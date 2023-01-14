@@ -144,8 +144,6 @@ export default function DownloadPage({ prefill }: { prefill: string | null }) {
                                     {videoMeta.author.name}
                                 </strong>
                             </Link>
-
-                            {" (" + stringifyNumber(videoMeta.author.subscribers) + " subscribers)"}
                         </>}
                     />
                     <CardActions>
@@ -154,13 +152,6 @@ export default function DownloadPage({ prefill }: { prefill: string | null }) {
                             <Tooltip arrow title={videoMeta.views.toLocaleString() + " views"}>
                                 <Typography>
                                     {stringifyNumber(videoMeta.views)}
-                                </Typography>
-                            </Tooltip>
-
-                            <ThumbUpIcon sx={{ml: 2, mr: 1, color: theme.palette.text.secondary}} />
-                            <Tooltip arrow title={videoMeta.likes.toLocaleString() + " likes"}>
-                                <Typography>
-                                    {stringifyNumber(videoMeta.likes)}
                                 </Typography>
                             </Tooltip>
                         </Box>
