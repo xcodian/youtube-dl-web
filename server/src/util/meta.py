@@ -45,10 +45,10 @@ def query_meta(id: str) -> dict:
         "title": data["fulltitle"],
         "author": {
             "name": data["channel"],
-            "subscribers": data["channel_follower_count"]
+            # "subscribers": data["channel_follower_count"] --- Removed from yt-dlp json response :(
         },
         "thumbnail": data['thumbnail'],
-        "likes": data["like_count"],
+        # "likes": data["like_count"], --- Removed from yt-dlp json response :(
         "views": data["view_count"],
         "formats": [],
         "subs": _only_named_subs(

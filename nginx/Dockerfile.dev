@@ -1,0 +1,4 @@
+FROM nginx:stable
+
+RUN mkdir -p /etc/ytdl-web/static
+COPY ./nginx.dev.conf /etc/nginx/nginx.conf
