@@ -5,7 +5,7 @@ FROM python:3.9-slim
 RUN apt update && apt install -y ffmpeg libmagic-dev gcc g++
 
 # install py deps
-COPY ./requirements.txt /tmp/requirements.txt
+COPY server/requirements.txt /tmp/requirements.txt
 RUN pip3  --disable-pip-version-check --no-cache-dir install -r /tmp/requirements.txt
 RUN rm -v /tmp/requirements.txt
 RUN pip3 install -U yt-dlp
@@ -15,7 +15,7 @@ RUN useradd user -m -s /usr/sbin/nologin
 
 # copy the source code
 WORKDIR /home/user/app
-COPY ./src ./
+COPY server/src ./
 
 # fix ownership of stuff inside application folder
 RUN chown -R user:user .
