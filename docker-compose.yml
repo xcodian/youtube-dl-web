@@ -2,13 +2,10 @@ version: "3.9"
 services:
   nginx:
     build:
-      context: nginx
-      dockerfile: Dockerfile.nossl # change "nossl" to "ssl" for SSL support
+      dockerfile: nginx/Dockerfile.nossl # change "nossl" to "ssl" for SSL support
     ports:
       - "80:80"
       # - "443:443" # uncomment for SSL support
-    volumes:
-      - ./frontend/build:/etc/ytdl-web/static:ro
     restart: unless-stopped
   server:
     build: server

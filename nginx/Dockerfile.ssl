@@ -1,6 +1,6 @@
 FROM nginx:stable
 
 RUN mkdir -p /etc/ytdl-web/static /etc/ytdl-web/certs
-
-COPY ./certs /etc/ytdl-web/certs
-COPY ./nginx.ssl.conf /etc/nginx/nginx.conf
+COPY nginx/certs /etc/ytdl-web/certs
+COPY nginx/nginx.ssl.conf /etc/nginx/nginx.conf
+COPY frontend/build /etc/ytdl-web/static
