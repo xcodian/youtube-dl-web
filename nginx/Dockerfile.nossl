@@ -1,4 +1,5 @@
 FROM nginx:stable
 
 RUN mkdir -p /etc/ytdl-web/static
-COPY ./nginx.nossl.conf /etc/nginx/nginx.conf
+COPY nginx/nginx.nossl.conf /etc/nginx/nginx.conf
+COPY frontend/build /etc/ytdl-web/static
