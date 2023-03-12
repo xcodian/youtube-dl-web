@@ -1,0 +1,13 @@
+name: Build with Docker Compose
+run-name: "${{ github.event_name }}: ${{ github.ref_name }}: ${{ github.sha }}"
+on:
+  push:
+    branches:
+      - "actions"
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - run: docker-compose build
