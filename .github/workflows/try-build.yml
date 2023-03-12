@@ -1,9 +1,11 @@
 name: Build with Docker Compose
-run-name: "${{ github.event_name }}: ${{ github.ref_name }}: ${{ github.sha }}"
+run-name: "${{ github.event_name }}: ${{ github.ref_name }}: ${{ github.event.head_commit.message }}"
 on:
   push:
     branches:
-      - "actions"
+      - "master"
+  pull_request:
+    types: [opened, reopened]
 jobs:
   Build:
     runs-on: ubuntu-latest
