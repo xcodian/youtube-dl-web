@@ -13,4 +13,4 @@ then
     echo "warn: build directory already exists!"
 fi
 
-docker run -it --rm -v $(pwd):/mnt -w /mnt -u node node:17 sh -c "yarn install; yarn build"
+docker run --rm -v $(pwd):/mnt -w /mnt -u node node:17 sh -c "yarn install; yarn build"
