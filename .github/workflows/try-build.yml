@@ -4,8 +4,7 @@ on:
   push:
     branches:
       - "master"
-  pull_request:
-    types: [opened, reopened]
+  pull_request: {}
 jobs:
   Build:
     runs-on: ubuntu-latest
