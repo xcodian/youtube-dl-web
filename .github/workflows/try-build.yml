@@ -10,7 +10,8 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
-      - run: chown -R 1000:1000 .
+      - name: Change ownership to 1000:1000
+        run: sudo chown -R 1000:1000 .
       - name: Build Frontend
         working-directory: ./frontend
         run: |
