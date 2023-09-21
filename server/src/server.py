@@ -13,7 +13,7 @@ from util.stream import stream_from_yt
 
 app = FastAPI()
 
-@app.get("/dl/{video_id}")
+@app.get("/dl/")
 async def api_dl(
     video_id: str,   # the video's ID (watch?v=<this>)
     f: str = "best", # format 

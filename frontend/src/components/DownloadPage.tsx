@@ -55,7 +55,10 @@ export default function DownloadPage({ prefill }: { prefill: string | null }) {
             setVideoURL(v);
         } catch (err: any) {
             setError(err.toString());
-            setVideoURL(null);
+            setVideoURL({
+                raw: url.toString(),
+                id: "none",
+            });
         }
 
         setVideoMeta(null);
@@ -109,11 +112,32 @@ export default function DownloadPage({ prefill }: { prefill: string | null }) {
             // endIcon={<DownloadIcon /> } 
             fullWidth 
             sx={{ mt: 1 }}
-            disabled={videoURL == null || videoMeta != null}
+            disabled={videoURL == null || videoURL!.id == "none" || videoMeta != null}
             onClick={onQueryClick}
             loading={isMetaLoading}
         >
             Query Metadata
+        </LoadingButton>
+
+        <LoadingButton 
+            variant="contained" 
+            endIcon={<DownloadIcon /> } 
+            fullWidth 
+            sx={{ mt: 1 }}
+            disabled={videoURL == null}
+            size="small"
+            onClick={
+                () => {
+                    download(
+                        videoURL!.raw, 
+                        "none", "none",
+                        false,
+                        "none", "none"
+                    );
+                }
+            }
+        >
+            Raw download
         </LoadingButton>
 
         {
