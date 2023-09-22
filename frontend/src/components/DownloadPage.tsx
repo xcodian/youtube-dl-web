@@ -128,12 +128,17 @@ export default function DownloadPage({ prefill }: { prefill: string | null }) {
             size="small"
             onClick={
                 () => {
+                    let filename = prompt('Enter filename:');
+                    if (filename === null || filename === '') {
+                        filename = 'none';
+                    }
+
                     download(
                         videoURL!.raw, 
                         "none", "none",
                         false,
                         "none", "none",
-                        "none"
+                        filename
                     );
                 }
             }
