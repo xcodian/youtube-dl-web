@@ -1,5 +1,5 @@
 # PRODUCTION DOCKERFILE
-FROM python:3.9-slim
+FROM python:3.11-slim
 
 # install pkg deps
 RUN apt update && apt install -y ffmpeg libmagic-dev gcc g++

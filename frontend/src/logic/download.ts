@@ -44,7 +44,7 @@ export function getDownloadLink(
     videoFrom: Format | "none",
     audioFrom: Format | "none",
 ): string {
-    let f = `/api/dl/?video_id=${id}?f=`;
+    let f = `/api/dl/?video_id=${id}&f=`;
 
     if (audioFrom == "none") {
         // only download video

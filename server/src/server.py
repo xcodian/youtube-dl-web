@@ -3,6 +3,12 @@ import os
 
 import magic
 
+import ffmpeg
+import subprocess
+import asyncio
+import io
+from typing import Optional
+
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse, JSONResponse, FileResponse
 from fastapi.background import BackgroundTasks
@@ -22,12 +28,32 @@ async def api_dl(
     stream = stream_from_yt(video_id, f, sl)  
     first_chunk = await stream.__anext__() # peek first chunk
 
-    # guess filetype
+    # Check if the first chunk contains only audio streams
+    audio_only = False
+    cmd = ['ffprobe', '-i', 'pipe:0', '-select_streams', 'v', '-show_entries', 'stream=codec_type', '-of', 'compact=p=0:nk=1']
+    process = await asyncio.create_subprocess_exec(*cmd, stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
+    stdout, stderr = await process.communicate(input=first_chunk)
+
+    if process.returncode == 0:
+        output = stdout.decode()
+        stream_types = output.strip().split('\n')
+
+        # Check if there are any video streams in the first chunk
+        if 'video' not in stream_types:
+            audio_only = True
+
     m = magic.Magic(mime=True, uncompress=True)
     mime_type = m.from_buffer(first_chunk)
 
-    # guess extension based on mimetype
-    ext = mimetypes.guess_extension(mime_type) or '.mkv' # fallback to mkv I guess
+    # Check if it's an audio or video MIME type and set the extension accordingly
+    if mime_type.startswith('audio/') or audio_only:
+        ext = '.mp4'  # You can set your preferred audio extension here #! I have set mp4 just becouse audio format 48000 Hz @ 152.40 Kbps with mp3 was not playable, somehow corrupted, need fix to download audio only in mp3 as it is better
+    elif mime_type.startswith('video/'):
+        ext = '.mp4'  # You can set your preferred video extension here
+    else:
+        ext = '.mkv'  # Fallback for other MIME types
+
+    #ext = mimetypes.guess_extension(mime_type) or '.mkv'
     
     print(f"[{video_id}]: download type: {mime_type} ({ext})")
     
