@@ -132,7 +132,8 @@ export default function DownloadPage({ prefill }: { prefill: string | null }) {
                         videoURL!.raw, 
                         "none", "none",
                         false,
-                        "none", "none"
+                        "none", "none",
+                        "none"
                     );
                 }
             }
@@ -292,7 +293,8 @@ export default function DownloadPage({ prefill }: { prefill: string | null }) {
                                     download(
                                         videoURL!.id, f, "none",
                                         shouldDownloadSubs,
-                                        targetSubId, subFormat
+                                        targetSubId, subFormat,
+                                        videoMeta.title
                                     )
                                 }}
                                 key={f.id} 
@@ -444,7 +446,8 @@ export default function DownloadPage({ prefill }: { prefill: string | null }) {
                                             videoURL!.id, 
                                             videoFormatFrom, audioFormatFrom,
                                             shouldDownloadSubs,
-                                            targetSubId, subFormat
+                                            targetSubId, subFormat,
+                                            videoMeta.title
                                         );
                                     }
                                 }

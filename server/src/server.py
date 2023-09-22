@@ -24,6 +24,7 @@ async def api_dl(
     video_id: str,   # the video's ID (watch?v=<this>)
     f: str = "best", # format 
     sl: str = None,  # subtitle language to embed
+    filename: str = "none", # for filename assign
 ):
     stream = stream_from_yt(video_id, f, sl)  
     first_chunk = await stream.__anext__() # peek first chunk
@@ -56,10 +57,16 @@ async def api_dl(
     #ext = mimetypes.guess_extension(mime_type) or '.mkv'
     
     print(f"[{video_id}]: download type: {mime_type} ({ext})")
+    print(f"Filename: {filename}")
     
-    headers = {
-        "Content-Disposition": f"attachment;filename={video_id}{ext}"
-    }
+    if filename == "none":
+        headers = {
+            "Content-Disposition": f'attachment; filename="{video_id}{ext}"'
+        }
+    else:
+        headers = {
+            "Content-Disposition": f'attachment; filename="{filename}{ext}"'
+        }
 
     async def joined_stream():
         # attach the first chunk back to the generator
