@@ -30,6 +30,12 @@ async def aio_dummy():
 
 async def stream_from_yt(id: str, format: str = "best", sl: str = None):
     print(f"[{id}]: requested with format {format} and subs {sl}, configuring...")
+    
+    # Check if the format is "undefined" and set it to "best" if so
+    if format == "undefined":
+        format = "best"
+        print(f"[{id}]: Format set to 'best' because it was 'undefined'")
+
     args = [
         # request to download with video ID
         "yt-dlp", id, 
@@ -112,7 +118,7 @@ async def stream_from_yt(id: str, format: str = "best", sl: str = None):
 
         while True:
             if sub_injector_proc is not None:
-                # print('read bucket from injector...')
+                print('read bucket from injector...')
                 r, w, x = select.select([ sub_injector_proc.stdout ], [], [], 1)
                 if sub_injector_proc.stdout in r:
                     bucket = os.read(sub_injector_proc.stdout.fileno(), 65536)
@@ -121,7 +127,7 @@ async def stream_from_yt(id: str, format: str = "best", sl: str = None):
                     await aio_dummy()
                     continue
             else:
-                # print('try to read bucket from downloader proc...')
+                print('try to read bucket from downloader proc...')
                 bucket = downloader_proc.stdout.read(131072)
 
             if len(bucket) == 0:

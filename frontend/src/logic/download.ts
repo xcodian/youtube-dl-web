@@ -17,9 +17,10 @@ export function download(
     audioFrom: Format | "none", 
     downloadSubs: boolean,
     subLanguage: string, 
-    subFormat: string
+    subFormat: string,
+    filename: string
 ) { 
-    let url = getDownloadLink(id, videoFrom, audioFrom);
+    let url = getDownloadLink(id, videoFrom, audioFrom, filename);
 
     if (downloadSubs) {
         if (subLanguage == "live_chat") {
@@ -43,8 +44,9 @@ export function getDownloadLink(
     id: string,
     videoFrom: Format | "none",
     audioFrom: Format | "none",
+    filename: string
 ): string {
-    let f = `/api/dl/${id}?f=`;
+    let f = `/api/dl/?video_id=${id}&f=`;
 
     if (audioFrom == "none") {
         // only download video
@@ -58,6 +60,9 @@ export function getDownloadLink(
             f += videoFrom.id + "%2B" + audioFrom.id
         }
     }
+
+
+    f += `&filename=${filename}`
     
     return f
 }
