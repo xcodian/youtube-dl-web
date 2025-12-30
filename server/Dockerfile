@@ -1,14 +1,19 @@
 # PRODUCTION DOCKERFILE
-FROM python:3.9-slim
+FROM python:3.10-slim
+
+ENV DEBIAN_FRONTEND=noninteractive
 
 # install pkg deps
-RUN apt update && apt install -y ffmpeg libmagic-dev gcc g++
+RUN apt-get update && apt-get install -y ffmpeg libmagic-dev gcc g++
+
+# bring in Deno javascript runtime for yt-dlp
+COPY --from=denoland/deno:bin-2.6.3 /deno /usr/local/bin/deno
 
 # install py deps
 COPY ./requirements.txt /tmp/requirements.txt
-RUN pip3  --disable-pip-version-check --no-cache-dir install -r /tmp/requirements.txt
+RUN pip3 --disable-pip-version-check --no-cache-dir install -r /tmp/requirements.txt
 RUN rm -v /tmp/requirements.txt
-RUN pip3 install -U yt-dlp
+RUN pip3 --disable-pip-version-check --no-cache-dir install -U yt-dlp
 
 # make the nonroot user
 RUN useradd user -m -s /usr/sbin/nologin
